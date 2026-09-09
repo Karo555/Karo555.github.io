@@ -1,17 +1,187 @@
 ---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import MigrationCanvas from "../components/MigrationCanvas.astro";
 
+const entries = await getCollection("projects");
+const projects = entries.sort((a, b) => a.data.order - b.data.order);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base title="Karo — computational biology and AI safety">
+  <main class="shell">
+    <div class="field-column">
+      <MigrationCanvas trackCount={projects.length} />
+    </div>
+
+    <div class="text-column">
+      <header class="intro">
+        <h1>Research scientist</h1>
+        <p class="lede">
+          AI x Bio | Biosecurity
+        </p>
+      </header>
+
+      <section class="work" aria-labelledby="work-heading">
+        <h2 id="work-heading" class="section-title">Selected work</h2>
+        <ul class="tracks">
+          {
+            projects.map((project, index) => (
+              <li class="track" data-index={index}>
+                <a class="track-link" href={`/projects/${project.id}/`}>
+                  <h3 class="track-title">{project.data.title}</h3>
+                  <p class="track-note">{project.data.note}</p>
+                  <p class="track-status">{project.data.status}</p>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <p class="pending">
+        Drug discovery and AI safety work is in preparation and not yet public.
+      </p>
+
+      <footer class="foot">
+        <a href="mailto:nowackadev@gmail.com">Email</a>
+        <a href="https://github.com/Karo555">GitHub</a>
+      </footer>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .shell {
+    display: grid;
+    gap: var(--s-5);
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: var(--s-5) var(--s-4) var(--s-6);
+  }
+
+  @media (min-width: 900px) {
+    .shell {
+      grid-template-columns: minmax(260px, 34%) 1fr;
+      gap: var(--s-6);
+      padding-top: var(--s-6);
+    }
+
+    .field-column {
+      position: sticky;
+      top: var(--s-5);
+      align-self: start;
+    }
+  }
+
+  .text-column {
+    max-width: var(--measure);
+  }
+
+  .intro h1 {
+    font-size: var(--size-5);
+    margin-bottom: var(--s-3);
+  }
+
+  .lede {
+    font-size: var(--size-3);
+    line-height: 1.4;
+    color: color-mix(in srgb, var(--ink) 78%, var(--bg));
+    margin: 0;
+    max-width: 34ch;
+  }
+
+  .work {
+    margin-top: var(--s-6);
+  }
+
+  .section-title {
+    font-family: var(--face-text);
+    font-weight: 500;
+    font-size: var(--size-1);
+    color: var(--muted);
+    letter-spacing: 0;
+    margin-bottom: var(--s-3);
+  }
+
+  .tracks {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .track {
+    border-top: 1px solid color-mix(in srgb, var(--muted) 50%, transparent);
+  }
+
+  .track:last-child {
+    border-bottom: 1px solid color-mix(in srgb, var(--muted) 50%, transparent);
+  }
+
+  .track-link {
+    display: block;
+    padding: var(--s-4) 0 var(--s-4) var(--s-3);
+    border-left: 2px solid transparent;
+    text-decoration: none;
+    transition: border-color 120ms linear, padding-left 120ms linear;
+  }
+
+  .track-link:hover,
+  .track-link:focus-visible {
+    border-left-color: var(--track);
+    padding-left: var(--s-4);
+  }
+
+  .track-title {
+    font-size: var(--size-4);
+    margin-bottom: var(--s-2);
+  }
+
+  .track-note {
+    margin: 0 0 var(--s-2);
+    max-width: 52ch;
+    color: color-mix(in srgb, var(--ink) 80%, var(--bg));
+  }
+
+  .track-status {
+    margin: 0;
+    font-family: var(--face-data);
+    font-size: var(--size-1);
+    color: var(--muted);
+  }
+
+  .pending {
+    margin: var(--s-4) 0 0;
+    font-size: var(--size-1);
+    color: var(--muted);
+  }
+
+  .foot {
+    margin-top: var(--s-6);
+    display: flex;
+    gap: var(--s-4);
+    font-size: var(--size-1);
+  }
+
+  .foot a {
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+</style>
+
+<script>
+  const tracks = document.querySelectorAll<HTMLElement>(".track");
+
+  tracks.forEach((track) => {
+    const index = Number(track.dataset.index);
+    const enter = () =>
+      document.dispatchEvent(
+        new CustomEvent("track:enter", { detail: { index } })
+      );
+    const leave = () => document.dispatchEvent(new CustomEvent("track:leave"));
+
+    track.addEventListener("pointerenter", enter);
+    track.addEventListener("pointerleave", leave);
+    track.addEventListener("focusin", enter);
+    track.addEventListener("focusout", leave);
+  });
+</script>

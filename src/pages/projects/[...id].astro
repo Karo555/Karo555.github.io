@@ -1,0 +1,192 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import PipelineStages from "../../components/PipelineStages.astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("projects");
+  const ordered = entries.sort((a, b) => a.data.order - b.data.order);
+
+  return ordered.map((entry, index) => ({
+    params: { id: entry.id },
+    props: {
+      entry,
+      previous: ordered[index - 1] ?? null,
+      next: ordered[index + 1] ?? null,
+      // Kept as a code path, not deleted: entries will be added back.
+      hasSiblings: ordered.length > 1,
+    },
+  }));
+}
+
+const { entry, previous, next, hasSiblings } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<Base title={`${entry.data.title} — Karo`} description={entry.data.note}>
+  <main class="page">
+    <nav class="back">
+      <a href="/">Back to all work</a>
+    </nav>
+
+    <article>
+      <header class="head">
+        <h1>{entry.data.title}</h1>
+        <p class="note">{entry.data.note}</p>
+        <p class="meta">
+          <span>{entry.data.status}</span>
+          {entry.data.period && <span>{entry.data.period}</span>}
+        </p>
+      </header>
+
+      {entry.data.pipeline && <PipelineStages stages={entry.data.pipeline} />}
+
+      <div class="prose">
+        <Content />
+      </div>
+    </article>
+
+    {
+      hasSiblings && (
+        <nav class="adjacent">
+          {previous && (
+            <a class="adjacent-link" href={`/projects/${previous.id}/`}>
+              <span class="adjacent-label">Previous</span>
+              <span class="adjacent-title">{previous.data.title}</span>
+            </a>
+          )}
+          {next && (
+            <a class="adjacent-link adjacent-link--end" href={`/projects/${next.id}/`}>
+              <span class="adjacent-label">Next</span>
+              <span class="adjacent-title">{next.data.title}</span>
+            </a>
+          )}
+        </nav>
+      )
+    }
+  </main>
+</Base>
+
+<style>
+  .page {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: var(--s-5) var(--s-4) var(--s-6);
+  }
+
+  .back a {
+    font-size: var(--size-1);
+    color: var(--muted);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .back a:hover {
+    color: var(--track);
+  }
+
+  .head {
+    /* The magenta rule is the only carry-over from the highlighted track. */
+    border-top: 2px solid var(--track);
+    margin-top: var(--s-4);
+    padding-top: var(--s-4);
+  }
+
+  .head h1 {
+    font-size: var(--size-5);
+    max-width: 20ch;
+  }
+
+  .note {
+    font-size: var(--size-3);
+    line-height: 1.4;
+    max-width: 46ch;
+    color: color-mix(in srgb, var(--ink) 78%, var(--bg));
+    margin: var(--s-3) 0 0;
+  }
+
+  .meta {
+    display: flex;
+    gap: var(--s-4);
+    margin: var(--s-4) 0 0;
+    font-family: var(--face-data);
+    font-size: var(--size-1);
+    color: var(--muted);
+  }
+
+  .prose {
+    margin-top: var(--s-6);
+    max-width: var(--measure);
+  }
+
+  .prose :global(h2) {
+    font-family: var(--face-text);
+    font-weight: 500;
+    font-size: var(--size-2);
+    color: var(--collagen);
+    margin: var(--s-5) 0 var(--s-2);
+  }
+
+  .prose :global(p) {
+    margin: 0 0 var(--s-3);
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: var(--s-3);
+    margin: 0 0 var(--s-3);
+  }
+
+  .prose :global(li) {
+    margin-bottom: var(--s-1);
+  }
+
+  .prose :global(code) {
+    font-family: var(--face-data);
+    font-size: 0.9em;
+  }
+
+  .prose :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: var(--s-4) 0;
+  }
+
+  .adjacent {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-4);
+    margin-top: var(--s-6);
+    border-top: 1px solid color-mix(in srgb, var(--muted) 50%, transparent);
+    padding-top: var(--s-4);
+  }
+
+  .adjacent-link {
+    display: grid;
+    gap: var(--s-1);
+    max-width: 20ch;
+    text-decoration: none;
+  }
+
+  .adjacent-link--end {
+    text-align: right;
+    margin-left: auto;
+  }
+
+  .adjacent-label {
+    font-family: var(--face-data);
+    font-size: var(--size-1);
+    color: var(--muted);
+  }
+
+  .adjacent-title {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .adjacent-link:hover .adjacent-title {
+    color: var(--track);
+  }
+</style>

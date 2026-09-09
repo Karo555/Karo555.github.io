@@ -1,0 +1,92 @@
+/* Design tokens — karo555.github.io */
+
+:root {
+  /* Colour */
+  --bg: #e3e5e2;
+  --ink: #16302b;
+  --collagen: #00707c;
+  --track: #b0246b;
+  --muted: #8c9a93;
+  --ink-soft: color-mix(in srgb, var(--ink) 78%, var(--bg));
+  --hair: color-mix(in srgb, var(--ink) 20%, transparent);
+  --plate: color-mix(in srgb, var(--bg) 88%, white);
+
+  /* Type */
+  --face-display: "Zodiak", Georgia, serif;
+  --face-text: "Switzer", system-ui, sans-serif;
+  --face-data: "IBM Plex Mono", ui-monospace, monospace;
+
+  --size-1: 0.813rem;
+  --size-2: 1rem;
+  --size-3: 1.333rem;
+  --size-4: 1.777rem;
+  --size-5: 3.157rem;
+  /* Display: fluid, breaks out of the modular scale on purpose. */
+  --size-6: clamp(2.6rem, 7.4vw, 5.6rem);
+
+  /* Space — 4px base */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 1rem;
+  --s-4: 1.5rem;
+  --s-5: 2.5rem;
+  --s-6: 4rem;
+
+  --measure: 62ch;
+
+  /* Editorial grid */
+  --cols: 12;
+  --gutter: var(--s-4);
+  --page: 1280px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 17px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--face-text);
+  font-size: var(--size-2);
+  line-height: 1.55;
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--face-display);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--track);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
