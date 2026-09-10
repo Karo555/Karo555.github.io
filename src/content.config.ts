@@ -31,4 +31,20 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { projects };
+// Publications link out to a DOI and get no detail page, so there is no body
+// to render: every field that matters lives in the frontmatter.
+const papers = defineCollection({
+  loader: glob({ pattern: "**/[^_]*.md", base: "./src/content/papers" }),
+  schema: z.object({
+    title: z.string(),
+    authors: z.array(z.string()), // full list, in publication order
+    me: z.number().int().min(0), // zero-based index of the site owner
+    venue: z.string(), // journal or preprint server
+    year: z.number().int(),
+    // Optional: a paper can be accepted and not yet assigned a DOI.
+    doi: z.string().optional(), // bare DOI, e.g. 10.1234/abcd.2026.001
+    status: z.enum(["preprint", "in review", "peer-reviewed"]),
+  }),
+});
+
+export const collections = { projects, papers };

@@ -1,0 +1,152 @@
+---
+export type Paper = {
+  id: string;
+  title: string;
+  authors: string[];
+  me: number;
+  venue: string;
+  year: number;
+  doi?: string;
+  status: "preprint" | "in review" | "peer-reviewed";
+};
+
+interface Props {
+  papers: Paper[];
+}
+
+const { papers } = Astro.props;
+
+const sorted = [...papers].sort((a, b) => b.year - a.year);
+
+// Both layout switches are length checks, never hardcoded: a lone paper is left
+// open at the bottom so it reads as complete rather than truncated, and the year
+// only earns its own column once there are enough of them to scan vertically.
+const framed = sorted.length >= 2;
+const columned = sorted.length >= 3;
+---
+
+<ul
+  class:list={["pubs", { "pubs--framed": framed, "pubs--columned": columned }]}
+>
+  {
+    sorted.map((paper) => (
+      <li class="pub">
+        {columned && <span class="pub-year pub-year--column">{paper.year}</span>}
+
+        <div class="pub-body">
+          <p class="pub-meta">
+            <span class="pub-where">
+              {!columned && <span class="pub-year">{paper.year}</span>}
+              <span class="pub-venue">{paper.venue}</span>
+            </span>
+            <span class="pub-status">{paper.status}</span>
+          </p>
+
+          <a
+            class="pub-title"
+            href={`/papers/${paper.id}/`}
+          >
+            {paper.title}
+          </a>
+
+          <p class="pub-authors">
+            {paper.authors.map((author, index) => (
+              <>
+                {index > 0 && ", "}
+                <span class={index === paper.me ? "pub-me" : undefined}>
+                  {author}
+                </span>
+              </>
+            ))}
+          </p>
+        </div>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .pubs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pub {
+    border-top: 1px solid color-mix(in srgb, var(--muted) 50%, transparent);
+    padding: var(--s-4) 0;
+  }
+
+  /* Closed off at the bottom only once a second entry makes it a list. */
+  .pubs--framed .pub:last-child {
+    border-bottom: 1px solid color-mix(in srgb, var(--muted) 50%, transparent);
+  }
+
+  .pubs--columned .pub {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: var(--s-4);
+    align-items: baseline;
+  }
+
+  .pub-meta {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--s-3);
+    row-gap: var(--s-1);
+    margin: 0 0 var(--s-2);
+  }
+
+  .pub-where {
+    display: flex;
+    column-gap: var(--s-3);
+    flex-wrap: wrap;
+  }
+
+  .pub-year,
+  .pub-venue,
+  .pub-status {
+    font-family: var(--face-data);
+    font-size: var(--size-1);
+    color: var(--muted);
+  }
+
+  /* Narrow: the status takes its own line under the venue. */
+  .pub-status {
+    flex-basis: 100%;
+  }
+
+  @media (min-width: 700px) {
+    .pub-status {
+      flex-basis: auto;
+      margin-left: auto;
+    }
+  }
+
+  .pub-title {
+    display: block;
+    font-family: var(--face-text);
+    font-size: var(--size-2);
+    color: var(--ink);
+    text-decoration: none;
+    max-width: 52ch;
+    transition: color 120ms linear;
+  }
+
+  .pub-title:hover,
+  .pub-title:focus-visible {
+    color: var(--track);
+  }
+
+  .pub-authors {
+    margin: var(--s-2) 0 0;
+    font-size: var(--size-1);
+    color: var(--muted);
+    max-width: 52ch;
+  }
+
+  /* Colour alone marks the site owner: no weight, rule or glyph. */
+  .pub-me {
+    color: var(--ink);
+  }
+</style>

@@ -1,0 +1,190 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("papers");
+
+  // Same guard the home page applies: an untitled entry is still being filled
+  // in, and should not get a URL of its own.
+  return entries
+    .filter((entry) => entry.data.title.trim() !== "")
+    .map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, authors, me, venue, year, doi, status } = entry.data;
+---
+
+<Base title={`${title} — Karo`} description={`${venue} ${year} — ${status}`}>
+  <main class="page">
+    <nav class="back">
+      <a href="/#publications">Back to publications</a>
+    </nav>
+
+    <article>
+      <header class="head">
+        <h1>{title}</h1>
+
+        <p class="authors">
+          {
+            authors.map((author, index) => (
+              <>
+                {index > 0 && ", "}
+                <span class={index === me ? "author-me" : undefined}>
+                  {author}
+                </span>
+              </>
+            ))
+          }
+        </p>
+
+        <p class="meta">
+          <span>{year}</span>
+          <span>{venue}</span>
+          <span>{status}</span>
+        </p>
+
+        {
+          doi && (
+            <p class="doi">
+              <a href={`https://doi.org/${doi}`} rel="noopener">
+                doi.org/{doi}
+              </a>
+            </p>
+          )
+        }
+      </header>
+
+      <div class="prose">
+        <Content />
+      </div>
+    </article>
+  </main>
+</Base>
+
+<style>
+  .page {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: var(--s-5) var(--s-4) var(--s-6);
+  }
+
+  .back a {
+    font-size: var(--size-1);
+    color: var(--muted);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .back a:hover {
+    color: var(--track);
+  }
+
+  .head {
+    border-top: 2px solid var(--track);
+    margin-top: var(--s-4);
+    padding-top: var(--s-4);
+  }
+
+  .head h1 {
+    font-size: var(--size-4);
+    max-width: 30ch;
+  }
+
+  .authors {
+    margin: var(--s-3) 0 0;
+    font-size: var(--size-1);
+    color: var(--muted);
+  }
+
+  /* Colour alone, matching the list on the home page. */
+  .author-me {
+    color: var(--ink);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-4);
+    margin: var(--s-3) 0 0;
+    font-family: var(--face-data);
+    font-size: var(--size-1);
+    color: var(--muted);
+  }
+
+  .doi {
+    margin: var(--s-2) 0 0;
+    font-family: var(--face-data);
+    font-size: var(--size-1);
+  }
+
+  .doi a {
+    color: var(--muted);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .doi a:hover,
+  .doi a:focus-visible {
+    color: var(--track);
+  }
+
+  .prose {
+    margin-top: var(--s-6);
+    max-width: var(--measure);
+  }
+
+  .prose :global(h2) {
+    font-family: var(--face-text);
+    font-weight: 500;
+    font-size: var(--size-2);
+    color: var(--collagen);
+    margin: var(--s-5) 0 var(--s-2);
+  }
+
+  .prose :global(p) {
+    margin: 0 0 var(--s-3);
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: var(--s-3);
+    margin: 0 0 var(--s-3);
+  }
+
+  .prose :global(li) {
+    margin-bottom: var(--s-1);
+  }
+
+  .prose :global(strong) {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .prose :global(code) {
+    font-family: var(--face-data);
+    font-size: 0.9em;
+  }
+
+  /* Tables can outrun a narrow screen, so they scroll on their own. */
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 var(--s-3);
+    font-size: var(--size-1);
+  }
+
+  .prose :global(th),
+  .prose :global(td) {
+    text-align: left;
+    padding: var(--s-2) var(--s-3) var(--s-2) 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--muted) 50%, transparent);
+  }
+
+  .prose :global(th) {
+    font-weight: 500;
+    color: var(--muted);
+  }
+</style>
