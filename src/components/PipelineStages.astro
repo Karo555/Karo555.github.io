@@ -81,7 +81,10 @@ const FIGURES = {
     position: absolute;
     left: 0;
     top: 0;
+    /* Number and rule share one centre line: the digit is centred in this
+       box, and the rule below sits on the same box's midpoint. */
     width: 1.5rem;
+    text-align: center;
     font-family: var(--face-data);
     font-size: var(--size-1);
     font-variant-numeric: tabular-nums;
@@ -94,7 +97,8 @@ const FIGURES = {
   .stage::after {
     content: "";
     position: absolute;
-    left: 0.37rem;
+    /* Half of the number box, less half the rule's own width. */
+    left: calc(0.75rem - 0.5px);
     top: 1.8rem;
     bottom: 0;
     width: 1px;

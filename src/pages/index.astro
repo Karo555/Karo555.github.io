@@ -166,6 +166,13 @@ const projects = entries.sort((a, b) => a.data.order - b.data.order);
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
   }
+
+  /* Live links only: the placeholder href="#" stays inert, and picks the
+     hover up on its own once it points somewhere. */
+  .foot a:not([href="#"]):hover,
+  .foot a:not([href="#"]):focus-visible {
+    color: var(--track);
+  }
 </style>
 
 <script>
