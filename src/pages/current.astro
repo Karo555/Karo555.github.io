@@ -1,0 +1,173 @@
+---
+import Base from "../layouts/Base.astro";
+
+// One entry per piece of in-flight work, newest first. Deliberately a local
+// array rather than a content collection: these turn over faster than the
+// selected work, and a file-per-entry plus a schema would be more ceremony
+// than they earn. Promote an entry to src/content/projects/ once it settles.
+type Current = {
+  title: string;
+  note: string;
+  status: string;
+  period?: string;
+  url?: string;
+};
+
+const current: Current[] = [
+  {
+    title: "Deep learning from scratch",
+    note: "Building a deep-learning-from-scratch foundation for ML research in drug discovery — implementing neural network architectures (MLP, CNN, Transformer) from first principles in NumPy, with hand-derived backpropagation, applied to molecular property prediction on QM9.",
+    status: "in progress",
+  },
+];
+---
+
+<Base
+  title="Current work — Karo"
+  description="Work in progress across AI x Bio and biosecurity."
+>
+  <main class="page">
+    <nav class="back">
+      <a href="/">Back to all work</a>
+    </nav>
+
+    <article>
+      <header class="head">
+        <h1>Current work</h1>
+        <p class="note">What is in progress right now, ahead of write-up.</p>
+      </header>
+
+      {
+        current.length > 0 ? (
+          <ul class="entries">
+            {current.map((item) => (
+              <li class="entry">
+                {item.url ? (
+                  <a class="entry-link" href={item.url}>
+                    <h2 class="entry-title">{item.title}</h2>
+                    <p class="entry-note">{item.note}</p>
+                    <p class="entry-meta">
+                      <span>{item.status}</span>
+                      {item.period && <span>{item.period}</span>}
+                    </p>
+                  </a>
+                ) : (
+                  <div class="entry-link entry-link--static">
+                    <h2 class="entry-title">{item.title}</h2>
+                    <p class="entry-note">{item.note}</p>
+                    <p class="entry-meta">
+                      <span>{item.status}</span>
+                      {item.period && <span>{item.period}</span>}
+                    </p>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="empty">Nothing published here yet.</p>
+        )
+      }
+    </article>
+  </main>
+</Base>
+
+<style>
+  .page {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: var(--s-5) var(--s-4) var(--s-6);
+  }
+
+  .back a {
+    font-size: var(--size-1);
+    color: var(--muted);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .back a:hover {
+    color: var(--track);
+  }
+
+  .head {
+    /* Same magenta rule the project pages carry, for one visual family. */
+    border-top: 2px solid var(--track);
+    margin-top: var(--s-4);
+    padding-top: var(--s-4);
+  }
+
+  .head h1 {
+    font-size: var(--size-5);
+    max-width: 20ch;
+  }
+
+  .note {
+    font-size: var(--size-3);
+    line-height: 1.4;
+    max-width: 46ch;
+    color: var(--ink-soft);
+    margin: var(--s-3) 0 0;
+  }
+
+  .entries {
+    list-style: none;
+    margin: var(--s-6) 0 0;
+    padding: 0;
+  }
+
+  .entry {
+    border-top: 1px solid color-mix(in srgb, var(--muted) 50%, transparent);
+  }
+
+  .entry:last-child {
+    border-bottom: 1px solid color-mix(in srgb, var(--muted) 50%, transparent);
+  }
+
+  .entry-link {
+    display: block;
+    padding: var(--s-4) 0 var(--s-4) var(--s-3);
+    border-left: 2px solid transparent;
+    text-decoration: none;
+    transition: border-color 120ms linear, padding-left 120ms linear;
+  }
+
+  /* An entry with no url is still a row, just not a target. */
+  .entry-link--static {
+    padding-left: var(--s-3);
+  }
+
+  a.entry-link:hover,
+  a.entry-link:focus-visible {
+    border-left-color: var(--track);
+    padding-left: var(--s-4);
+  }
+
+  .entry-title {
+    font-family: var(--face-display);
+    font-weight: 700;
+    font-size: var(--size-4);
+    margin-bottom: var(--s-2);
+  }
+
+  .entry-note {
+    margin: 0 0 var(--s-2);
+    max-width: 52ch;
+    color: color-mix(in srgb, var(--ink) 80%, var(--bg));
+  }
+
+  .entry-meta {
+    display: flex;
+    gap: var(--s-4);
+    margin: 0;
+    font-family: var(--face-data);
+    font-size: var(--size-1);
+    color: var(--muted);
+  }
+
+  .empty {
+    margin: var(--s-6) 0 0;
+    font-size: var(--size-1);
+    color: var(--muted);
+  }
+</style>

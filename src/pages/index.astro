@@ -21,6 +21,17 @@ const projects = entries.sort((a, b) => a.data.order - b.data.order);
         </p>
       </header>
 
+      <section class="now" aria-labelledby="now-heading">
+        <h2 id="now-heading" class="section-title">Current work</h2>
+        <a class="tile" href="/current/">
+          <h3 class="tile-title">In progress</h3>
+          <p class="tile-note">
+            Work that is underway and not yet written up.
+          </p>
+          <span class="tile-cue">See what I am working on</span>
+        </a>
+      </section>
+
       <section class="work" aria-labelledby="work-heading">
         <h2 id="work-heading" class="section-title">Selected work</h2>
         <ul class="tracks">
@@ -88,6 +99,50 @@ const projects = entries.sort((a, b) => a.data.order - b.data.order);
     color: color-mix(in srgb, var(--ink) 78%, var(--bg));
     margin: 0;
     max-width: 34ch;
+  }
+
+  .now {
+    margin-top: var(--s-6);
+  }
+
+  /* A bordered plate, not a .track row: the tracks own data-index and drive
+     the canvas, and an extra one would dispatch an out-of-range index. */
+  .tile {
+    display: block;
+    padding: var(--s-4);
+    background: var(--plate);
+    border: 1px solid var(--hair);
+    border-left: 2px solid var(--collagen);
+    text-decoration: none;
+    transition: border-left-color 120ms linear, transform 120ms linear;
+  }
+
+  .tile:hover,
+  .tile:focus-visible {
+    border-left-color: var(--track);
+    transform: translateX(2px);
+  }
+
+  .tile-title {
+    font-size: var(--size-3);
+    margin-bottom: var(--s-2);
+  }
+
+  .tile-note {
+    margin: 0 0 var(--s-3);
+    max-width: 52ch;
+    color: color-mix(in srgb, var(--ink) 80%, var(--bg));
+  }
+
+  .tile-cue {
+    font-family: var(--face-data);
+    font-size: var(--size-1);
+    color: var(--muted);
+  }
+
+  .tile:hover .tile-cue,
+  .tile:focus-visible .tile-cue {
+    color: var(--track);
   }
 
   .work {
