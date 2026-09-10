@@ -1,0 +1,42 @@
+---
+interface Props {
+  methods?: string[];
+  class?: string;
+}
+
+const { methods, class: className } = Astro.props;
+
+// Absent and empty are the same case: render nothing, so no margin is left
+// behind by an element that exists but holds no items.
+const items = methods ?? [];
+---
+
+{
+  items.length > 0 && (
+    <p class:list={["methods", className]}>
+      {items.map((method) => (
+        <span class="method">{method}</span>
+      ))}
+    </p>
+  )
+}
+
+<style>
+  /* Space is the only separator: no commas, bullets, pipes or chevrons, and no
+     box of any kind around an item. These are annotations, not controls, so
+     nothing here is focusable or interactive. */
+  .methods {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--s-3);
+    row-gap: var(--s-1);
+    margin: 0;
+    font-family: var(--face-data);
+    font-size: var(--size-1);
+    color: var(--muted);
+  }
+
+  .method {
+    white-space: nowrap;
+  }
+</style>

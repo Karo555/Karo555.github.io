@@ -3,6 +3,8 @@ import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import MigrationCanvas from "../components/MigrationCanvas.astro";
 import PublicationList from "../components/PublicationList.astro";
+import MethodList from "../components/MethodList.astro";
+import { warnInconsistentMethods } from "../lib/methods";
 
 const entries = await getCollection("projects");
 const projects = entries.sort((a, b) => a.data.order - b.data.order);
@@ -21,6 +23,15 @@ const papers = paperEntries
     return usable;
   })
   .map((entry) => ({ id: entry.id, ...entry.data }));
+
+// Runs across both collections, so drift between a project and a paper is caught
+// as well as drift within either one.
+warnInconsistentMethods(
+  [...entries, ...paperEntries].map((entry) => ({
+    id: entry.id,
+    methods: entry.data.methods,
+  }))
+);
 ---
 
 <Base title="Karo — computational biology and AI safety">
@@ -61,6 +72,10 @@ const papers = paperEntries
                 <a class="track-link" href={`/projects/${project.id}/`}>
                   <h3 class="track-title">{project.data.title}</h3>
                   <p class="track-note">{project.data.note}</p>
+                  <MethodList
+                    methods={project.data.methods}
+                    class="track-methods"
+                  />
                   <p class="track-status">{project.data.status}</p>
                 </a>
               </li>
@@ -273,6 +288,10 @@ const papers = paperEntries
     margin: 0 0 var(--s-2);
     max-width: 52ch;
     color: color-mix(in srgb, var(--ink) 80%, var(--bg));
+  }
+
+  .track-methods {
+    margin-bottom: var(--s-2);
   }
 
   .track-status {

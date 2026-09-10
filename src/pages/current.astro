@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import MethodList from "../components/MethodList.astro";
 
 // One entry per piece of in-flight work, newest first. Deliberately a local
 // array rather than a content collection: these turn over faster than the
@@ -11,6 +12,7 @@ type Current = {
   status: string;
   period?: string;
   url?: string;
+  methods?: string[];
 };
 
 const current: Current[] = [
@@ -18,6 +20,13 @@ const current: Current[] = [
     title: "Deep learning from scratch",
     note: "Building a deep-learning-from-scratch foundation for ML research in drug discovery — implementing neural network architectures (MLP, CNN, Transformer) from first principles in NumPy, with hand-derived backpropagation, applied to molecular property prediction on QM9.",
     status: "in progress",
+    methods: [
+      "deep learning",
+      "backpropagation",
+      "transformers",
+      "molecular property prediction",
+      "NumPy",
+    ],
   },
 ];
 ---
@@ -46,6 +55,7 @@ const current: Current[] = [
                   <a class="entry-link" href={item.url}>
                     <h2 class="entry-title">{item.title}</h2>
                     <p class="entry-note">{item.note}</p>
+                    <MethodList methods={item.methods} class="entry-methods" />
                     <p class="entry-meta">
                       <span>{item.status}</span>
                       {item.period && <span>{item.period}</span>}
@@ -55,6 +65,7 @@ const current: Current[] = [
                   <div class="entry-link entry-link--static">
                     <h2 class="entry-title">{item.title}</h2>
                     <p class="entry-note">{item.note}</p>
+                    <MethodList methods={item.methods} class="entry-methods" />
                     <p class="entry-meta">
                       <span>{item.status}</span>
                       {item.period && <span>{item.period}</span>}
@@ -154,6 +165,10 @@ const current: Current[] = [
     margin: 0 0 var(--s-2);
     max-width: 52ch;
     color: color-mix(in srgb, var(--ink) 80%, var(--bg));
+  }
+
+  .entry-methods {
+    margin-bottom: var(--s-2);
   }
 
   .entry-meta {

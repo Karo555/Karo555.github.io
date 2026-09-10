@@ -5,6 +5,12 @@ me: 0
 venue: "ICCCI"
 year: 2026
 status: "peer-reviewed"
+methods:
+  - sentiment analysis
+  - multi-label classification
+  - transformer fine-tuning
+  - persona modeling
+  - LLM evaluation
 ---
 
 ## What the paper asks

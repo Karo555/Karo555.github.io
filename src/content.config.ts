@@ -28,6 +28,7 @@ const projects = defineCollection({
     order: z.number(),
     period: z.string().optional(),
     pipeline: z.array(stage).optional(),
+    methods: z.array(z.string()).max(6).optional(),
   }),
 });
 
@@ -44,6 +45,7 @@ const papers = defineCollection({
     // Optional: a paper can be accepted and not yet assigned a DOI.
     doi: z.string().optional(), // bare DOI, e.g. 10.1234/abcd.2026.001
     status: z.enum(["preprint", "in review", "peer-reviewed"]),
+    methods: z.array(z.string()).max(6).optional(),
   }),
 });
 

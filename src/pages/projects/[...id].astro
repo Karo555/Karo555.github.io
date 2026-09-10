@@ -2,6 +2,7 @@
 import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import PipelineStages from "../../components/PipelineStages.astro";
+import MethodList from "../../components/MethodList.astro";
 
 export async function getStaticPaths() {
   const entries = await getCollection("projects");
@@ -37,6 +38,7 @@ const { Content } = await render(entry);
           <span>{entry.data.status}</span>
           {entry.data.period && <span>{entry.data.period}</span>}
         </p>
+        <MethodList methods={entry.data.methods} class="head-methods" />
       </header>
 
       {entry.data.pipeline && <PipelineStages stages={entry.data.pipeline} />}
@@ -112,6 +114,10 @@ const { Content } = await render(entry);
     font-family: var(--face-data);
     font-size: var(--size-1);
     color: var(--muted);
+  }
+
+  .head-methods {
+    margin-top: var(--s-3);
   }
 
   .prose {

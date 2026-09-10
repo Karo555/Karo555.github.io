@@ -4,6 +4,12 @@ note: "The classical alignment-to-phylogeny stack, implemented from scratch: fiv
 status: "five implementations, written from scratch"
 order: 10
 period: "2024 — 2025"
+methods:
+  - dynamic programming
+  - sequence alignment
+  - hierarchical clustering
+  - phylogenetic inference
+  - Python
 pipeline:
   - repo: needleman-wunsch
     url: https://github.com/Karo555/needleman-wunsch
