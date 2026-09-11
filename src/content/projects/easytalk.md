@@ -2,7 +2,7 @@
 title: "EasyTalk"
 note: "An AI tool that answers questions about any website through a chat interface, combining web scrapers with a language model to find and format the answer."
 status: "HackYeah 2024, Open Task: Artificial Intelligence"
-order: 20
+order: 10
 period: "2024"
 repo: https://github.com/LukiLenkiewicz/hackyeah2024-ml
 methods:

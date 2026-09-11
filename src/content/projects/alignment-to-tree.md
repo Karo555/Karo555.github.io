@@ -2,7 +2,7 @@
 title: "From two sequences to a tree"
 note: "The classical alignment-to-phylogeny stack, implemented from scratch: five programs that hand their output to the next."
 status: "five implementations, written from scratch"
-order: 10
+order: 20
 period: "2024 — 2025"
 methods:
   - dynamic programming
