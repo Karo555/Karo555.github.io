@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import PipelineStages from "../../components/PipelineStages.astro";
 import MethodList from "../../components/MethodList.astro";
+import AwardNote from "../../components/AwardNote.astro";
 
 export async function getStaticPaths() {
   const entries = await getCollection("projects");
@@ -41,6 +42,16 @@ const { Content } = await render(entry);
             </p>
           )
         }
+        {
+          entry.data.repo && (
+            <p class="repo">
+              <a href={entry.data.repo} rel="noopener">
+                {entry.data.repo.replace(/^https?:\/\//, "")}
+              </a>
+            </p>
+          )
+        }
+        <AwardNote award={entry.data.award} class="head-award" />
         <MethodList methods={entry.data.methods} class="head-methods" />
       </header>
 
@@ -49,6 +60,27 @@ const { Content } = await render(entry);
       <div class="prose">
         <Content />
       </div>
+
+      {
+        entry.data.press && entry.data.press.length > 0 && (
+          <section class="press" aria-labelledby="press-heading">
+            <h2 id="press-heading" class="press-heading">Media about us</h2>
+            <ul class="press-list">
+              {entry.data.press.map((item) => (
+                <li class="press-item">
+                  <a class="press-link" href={item.url} rel="noopener">
+                    {item.title}
+                  </a>
+                  <p class="press-meta">
+                    <span>{item.source}</span>
+                    {item.date && <span>{item.date}</span>}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
     </article>
 
     {
@@ -119,6 +151,28 @@ const { Content } = await render(entry);
     color: var(--muted);
   }
 
+  /* Same treatment the paper page gives its DOI: quiet, monospace, a link. */
+  .repo {
+    margin: var(--s-2) 0 0;
+    font-family: var(--face-data);
+    font-size: var(--size-1);
+  }
+
+  .repo a {
+    color: var(--muted);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .repo a:hover,
+  .repo a:focus-visible {
+    color: var(--track);
+  }
+
+  .head :global(.head-award) {
+    margin-top: var(--s-3);
+  }
+
   .head :global(.head-methods) {
     margin-top: var(--s-3);
   }
@@ -160,6 +214,58 @@ const { Content } = await render(entry);
     width: 100%;
     height: auto;
     margin: var(--s-4) 0;
+  }
+
+  /* Same heading treatment the prose gives its h2s, so the section reads as
+     a continuation of the write-up rather than a new page region. */
+  .press {
+    margin-top: var(--s-5);
+    max-width: var(--measure);
+  }
+
+  .press-heading {
+    font-family: var(--face-text);
+    font-weight: 500;
+    font-size: var(--size-2);
+    color: var(--collagen);
+    margin: 0 0 var(--s-3);
+  }
+
+  .press-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .press-item {
+    padding: var(--s-3) 0;
+    border-top: 1px solid color-mix(in srgb, var(--muted) 50%, transparent);
+  }
+
+  .press-item:last-child {
+    border-bottom: 1px solid color-mix(in srgb, var(--muted) 50%, transparent);
+  }
+
+  .press-link {
+    display: block;
+    text-decoration: none;
+    max-width: 52ch;
+    transition: color 120ms linear;
+  }
+
+  .press-link:hover,
+  .press-link:focus-visible {
+    color: var(--track);
+  }
+
+  .press-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin: var(--s-1) 0 0;
+    font-family: var(--face-data);
+    font-size: var(--size-1);
+    color: var(--muted);
   }
 
   .adjacent {

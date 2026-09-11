@@ -1,0 +1,36 @@
+---
+export type Award = {
+  label: string;
+  body: string;
+  year: number;
+};
+
+interface Props {
+  award?: Award;
+  class?: string;
+}
+
+const { award, class: className } = Astro.props;
+
+// The year is appended only when the body does not already end in one, so
+// "ICCCI 2025" stays "ICCCI 2025" rather than becoming "ICCCI 2025 2025".
+const endsInYear = (body: string) => /\b\d{4}$/.test(body.trim());
+
+const text = award
+  ? `${award.label} — ${award.body}${endsInYear(award.body) ? "" : ` ${award.year}`}`
+  : null;
+---
+
+{text && <p class:list={["award", className]}>{text}</p>}
+
+<style>
+  /* Teal marks a durable property of the work; magenta is reserved for
+     interaction. The named institution is the whole signal: no icon, no box,
+     nothing focusable. */
+  .award {
+    margin: 0;
+    font-family: var(--face-data);
+    font-size: var(--size-1);
+    color: var(--collagen);
+  }
+</style>

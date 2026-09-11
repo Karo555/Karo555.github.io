@@ -19,6 +19,15 @@ const stage = z.object({
   blurb: z.string(),
 });
 
+// An award is a durable property of the work. label and body stay separate so
+// the rendered string can be reformatted without touching content files; both
+// are required, since an award with no named body cannot be rendered.
+const award = z.object({
+  label: z.string(), // e.g. "Best Paper"
+  body: z.string(), // awarding venue or institution, e.g. "ICCCI 2025"
+  year: z.number().int(),
+});
+
 const projects = defineCollection({
   loader: glob({ pattern: "**/[^_]*.md", base: "./src/content/projects" }),
   schema: z.object({
@@ -27,8 +36,22 @@ const projects = defineCollection({
     status: z.string(),
     order: z.number(),
     period: z.string().optional(),
+    // A single repository, for work that is not a pipeline of several.
+    repo: z.string().url().optional(),
     pipeline: z.array(stage).optional(),
     methods: z.array(z.string()).max(6).optional(),
+    award: award.optional(),
+    // Coverage elsewhere. Title is kept verbatim in the source language.
+    press: z
+      .array(
+        z.object({
+          title: z.string(),
+          source: z.string(),
+          url: z.string().url(),
+          date: z.string().optional(), // ISO, e.g. 2024-10-01
+        })
+      )
+      .optional(),
   }),
 });
 
@@ -46,6 +69,7 @@ const papers = defineCollection({
     doi: z.string().optional(), // bare DOI, e.g. 10.1234/abcd.2026.001
     status: z.enum(["preprint", "in review", "peer-reviewed"]),
     methods: z.array(z.string()).max(6).optional(),
+    award: award.optional(),
   }),
 });
 

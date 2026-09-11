@@ -1,4 +1,6 @@
 ---
+import AwardNote, { type Award } from "./AwardNote.astro";
+
 export type Paper = {
   id: string;
   title: string;
@@ -8,6 +10,7 @@ export type Paper = {
   year: number;
   doi?: string;
   methods?: string[];
+  award?: Award;
   status: "preprint" | "in review" | "peer-reviewed";
 };
 
@@ -60,6 +63,8 @@ const columned = sorted.length >= 3;
               </>
             ))}
           </p>
+
+          <AwardNote award={paper.award} class="pub-award" />
         </div>
       </li>
     ))
@@ -144,6 +149,10 @@ const columned = sorted.length >= 3;
     font-size: var(--size-1);
     color: var(--muted);
     max-width: 52ch;
+  }
+
+  .pub-body :global(.pub-award) {
+    margin-top: var(--s-2);
   }
 
   /* Colour alone marks the site owner: no weight, rule or glyph. */

@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import MigrationCanvas from "../components/MigrationCanvas.astro";
 import PublicationList from "../components/PublicationList.astro";
+import AwardNote from "../components/AwardNote.astro";
 import { warnInconsistentMethods } from "../lib/methods";
 
 const entries = await getCollection("projects");
@@ -25,6 +26,16 @@ const papers = paperEntries
 
 // Runs across both collections, so drift between a project and a paper is caught
 // as well as drift within either one.
+// The edge marker only reads as a marker while it is rare. Warn, never fail,
+// and never suppress one: which entries are awarded is the owner's call.
+const awarded = projects.filter((project) => project.data.award).length;
+if (projects.length > 0 && awarded > projects.length / 2) {
+  console.warn(
+    `[awards] ${awarded} of ${projects.length} projects carry an award; ` +
+      `the left-edge marker is losing its distinguishing value.`
+  );
+}
+
 warnInconsistentMethods(
   [...entries, ...paperEntries].map((entry) => ({
     id: entry.id,
@@ -68,9 +79,16 @@ warnInconsistentMethods(
           {
             projects.map((project, index) => (
               <li class="track" data-index={index}>
-                <a class="track-link" href={`/projects/${project.id}/`}>
+                <a
+                  class:list={[
+                    "track-link",
+                    { "track-link--awarded": project.data.award },
+                  ]}
+                  href={`/projects/${project.id}/`}
+                >
                   <h3 class="track-title">{project.data.title}</h3>
                   <p class="track-note">{project.data.note}</p>
+                  <AwardNote award={project.data.award} class="track-award" />
                   <p class="track-status">{project.data.status}</p>
                 </a>
               </li>
@@ -261,6 +279,7 @@ warnInconsistentMethods(
   }
 
   .track-link {
+    position: relative;
     display: block;
     padding: var(--s-4) 0 var(--s-4) var(--s-3);
     border-left: 2px solid transparent;
@@ -274,6 +293,21 @@ warnInconsistentMethods(
     padding-left: var(--s-4);
   }
 
+  /* A teal bookmark ribbon hanging from the entry's top rule at the right,
+     notched at the tip. Pure CSS: no SVG, no icon. Absolutely positioned, so
+     the hover padding shift on the link does not move it, and the magenta
+     hover border on the left is untouched. */
+  .track-link--awarded::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    right: var(--s-2);
+    width: 10px;
+    height: 28px;
+    background: var(--collagen);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 74%, 0 100%);
+  }
+
   .track-title {
     font-size: var(--size-4);
     margin-bottom: var(--s-2);
@@ -283,6 +317,11 @@ warnInconsistentMethods(
     margin: 0 0 var(--s-2);
     max-width: 52ch;
     color: color-mix(in srgb, var(--ink) 80%, var(--bg));
+  }
+
+  /* Child component: anchor on an element this page owns. */
+  .track-link :global(.track-award) {
+    margin-bottom: var(--s-2);
   }
 
   .track-status {

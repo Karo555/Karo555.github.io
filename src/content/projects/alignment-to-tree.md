@@ -46,6 +46,10 @@ pipeline:
     output: a tree
     figure: dendrogram
     blurb: "Builds and renders the tree implied by the clustering."
+# award:
+#   label: ""
+#   body: ""
+#   year: 2025
 ---
 
 These are implementations, not libraries. Each one was written to understand the
