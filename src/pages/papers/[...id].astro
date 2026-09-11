@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
+import MethodList from "../../components/MethodList.astro";
 
 export async function getStaticPaths() {
   const entries = await getCollection("papers");
@@ -14,7 +15,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { title, authors, me, venue, year, doi, status } = entry.data;
+const { title, venue, year, doi, status, methods } = entry.data;
 ---
 
 <Base title={`${title} — Karo`} description={`${venue} ${year} — ${status}`}>
@@ -27,25 +28,6 @@ const { title, authors, me, venue, year, doi, status } = entry.data;
       <header class="head">
         <h1>{title}</h1>
 
-        <p class="authors">
-          {
-            authors.map((author, index) => (
-              <>
-                {index > 0 && ", "}
-                <span class={index === me ? "author-me" : undefined}>
-                  {author}
-                </span>
-              </>
-            ))
-          }
-        </p>
-
-        <p class="meta">
-          <span>{year}</span>
-          <span>{venue}</span>
-          <span>{status}</span>
-        </p>
-
         {
           doi && (
             <p class="doi">
@@ -55,6 +37,7 @@ const { title, authors, me, venue, year, doi, status } = entry.data;
             </p>
           )
         }
+        <MethodList methods={methods} class="head-methods" />
       </header>
 
       <div class="prose">
@@ -93,27 +76,6 @@ const { title, authors, me, venue, year, doi, status } = entry.data;
     max-width: 30ch;
   }
 
-  .authors {
-    margin: var(--s-3) 0 0;
-    font-size: var(--size-1);
-    color: var(--muted);
-  }
-
-  /* Colour alone, matching the list on the home page. */
-  .author-me {
-    color: var(--ink);
-  }
-
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--s-4);
-    margin: var(--s-3) 0 0;
-    font-family: var(--face-data);
-    font-size: var(--size-1);
-    color: var(--muted);
-  }
-
   .doi {
     margin: var(--s-2) 0 0;
     font-family: var(--face-data);
@@ -129,6 +91,12 @@ const { title, authors, me, venue, year, doi, status } = entry.data;
   .doi a:hover,
   .doi a:focus-visible {
     color: var(--track);
+  }
+
+  /* The header holds only the title and this line, so it carries more space
+     than the project pages, where a note and period sit between the two. */
+  .head :global(.head-methods) {
+    margin-top: var(--s-5);
   }
 
   .prose {

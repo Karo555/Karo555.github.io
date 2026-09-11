@@ -1,6 +1,4 @@
 ---
-import MethodList from "./MethodList.astro";
-
 export type Paper = {
   id: string;
   title: string;
@@ -62,8 +60,6 @@ const columned = sorted.length >= 3;
               </>
             ))}
           </p>
-
-          <MethodList methods={paper.methods} class="pub-methods" />
         </div>
       </li>
     ))
@@ -148,10 +144,6 @@ const columned = sorted.length >= 3;
     font-size: var(--size-1);
     color: var(--muted);
     max-width: 52ch;
-  }
-
-  .pub-methods {
-    margin-top: var(--s-2);
   }
 
   /* Colour alone marks the site owner: no weight, rule or glyph. */

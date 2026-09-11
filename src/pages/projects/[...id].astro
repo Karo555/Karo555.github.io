@@ -34,10 +34,13 @@ const { Content } = await render(entry);
       <header class="head">
         <h1>{entry.data.title}</h1>
         <p class="note">{entry.data.note}</p>
-        <p class="meta">
-          <span>{entry.data.status}</span>
-          {entry.data.period && <span>{entry.data.period}</span>}
-        </p>
+        {
+          entry.data.period && (
+            <p class="meta">
+              <span>{entry.data.period}</span>
+            </p>
+          )
+        }
         <MethodList methods={entry.data.methods} class="head-methods" />
       </header>
 
@@ -116,7 +119,7 @@ const { Content } = await render(entry);
     color: var(--muted);
   }
 
-  .head-methods {
+  .head :global(.head-methods) {
     margin-top: var(--s-3);
   }
 

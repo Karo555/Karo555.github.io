@@ -3,7 +3,6 @@ import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import MigrationCanvas from "../components/MigrationCanvas.astro";
 import PublicationList from "../components/PublicationList.astro";
-import MethodList from "../components/MethodList.astro";
 import { warnInconsistentMethods } from "../lib/methods";
 
 const entries = await getCollection("projects");
@@ -72,10 +71,6 @@ warnInconsistentMethods(
                 <a class="track-link" href={`/projects/${project.id}/`}>
                   <h3 class="track-title">{project.data.title}</h3>
                   <p class="track-note">{project.data.note}</p>
-                  <MethodList
-                    methods={project.data.methods}
-                    class="track-methods"
-                  />
                   <p class="track-status">{project.data.status}</p>
                 </a>
               </li>
@@ -290,15 +285,18 @@ warnInconsistentMethods(
     color: color-mix(in srgb, var(--ink) 80%, var(--bg));
   }
 
-  .track-methods {
-    margin-bottom: var(--s-2);
-  }
-
   .track-status {
     margin: 0;
     font-family: var(--face-data);
     font-size: var(--size-1);
     color: var(--muted);
+    transition: color 120ms linear;
+  }
+
+  /* Same accent the Current work tile gives its cue on hover. */
+  .track-link:hover .track-status,
+  .track-link:focus-visible .track-status {
+    color: var(--track);
   }
 
   .pending {

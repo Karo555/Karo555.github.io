@@ -22,13 +22,12 @@ const items = methods ?? [];
 }
 
 <style>
-  /* Space is the only separator: no commas, bullets, pipes or chevrons, and no
-     box of any kind around an item. These are annotations, not controls, so
-     nothing here is focusable or interactive. */
+  /* A midline dot separates items; no box of any kind around one. These are
+     annotations, not controls, so nothing here is focusable or interactive. */
   .methods {
     display: flex;
     flex-wrap: wrap;
-    column-gap: var(--s-3);
+    column-gap: var(--s-2);
     row-gap: var(--s-1);
     margin: 0;
     font-family: var(--face-data);
@@ -38,5 +37,13 @@ const items = methods ?? [];
 
   .method {
     white-space: nowrap;
+  }
+
+  /* The dot rides with the item that follows it and inherits its nowrap, so a
+     separator never lands alone at the start or end of a wrapped line. */
+  .method + .method::before {
+    content: "·";
+    margin-right: var(--s-2);
+    color: color-mix(in srgb, var(--muted) 65%, transparent);
   }
 </style>

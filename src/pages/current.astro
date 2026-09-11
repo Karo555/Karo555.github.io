@@ -22,7 +22,6 @@ const current: Current[] = [
     status: "in progress",
     methods: [
       "deep learning",
-      "backpropagation",
       "transformers",
       "molecular property prediction",
       "NumPy",
@@ -57,7 +56,7 @@ const current: Current[] = [
                     <p class="entry-note">{item.note}</p>
                     <MethodList methods={item.methods} class="entry-methods" />
                     <p class="entry-meta">
-                      <span>{item.status}</span>
+                      <span class="entry-status">{item.status}</span>
                       {item.period && <span>{item.period}</span>}
                     </p>
                   </a>
@@ -67,7 +66,7 @@ const current: Current[] = [
                     <p class="entry-note">{item.note}</p>
                     <MethodList methods={item.methods} class="entry-methods" />
                     <p class="entry-meta">
-                      <span>{item.status}</span>
+                      <span class="entry-status">{item.status}</span>
                       {item.period && <span>{item.period}</span>}
                     </p>
                   </div>
@@ -167,8 +166,14 @@ const current: Current[] = [
     color: color-mix(in srgb, var(--ink) 80%, var(--bg));
   }
 
-  .entry-methods {
+  .entry-link :global(.entry-methods) {
     margin-bottom: var(--s-2);
+  }
+
+  /* The status is the live bit of an entry, so it takes the accent the rest of
+     the meta row does not. */
+  .entry-status {
+    color: var(--track);
   }
 
   .entry-meta {
